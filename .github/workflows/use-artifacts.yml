@@ -45,28 +45,50 @@ jobs:
             echo "$(data): $(curl -s http://localhost:8080/${i})"
           done
 
+# my typeup
+  # test-windows:
+  #   name: Test Windows
+  #   runs-on: [windows-latest]
+  #   needs: [build]
+  #   steps:
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: windows
 
+  #     - name: Test ${{ env.FILE_NAME }}.exe
+  #       run: |
+  #         Start-Process -FilePath ".\${{ env.FILE_NAME }}.exe" -NoNewWindow
+  #         Start-Sleep -Seconds 1
+  #         $names = @("Obi-wan", "Qui-gon", "Maul", "Vader", "Boba")
+  #         foreach($name in $names) {
+  #           $timestamp = GET-Date -Format "yyyy-MM-dd HH:mm:ss"
+  #           $response = Invoke-RestMethod -Uri "http://localhost:8080/$name" -Method Get
+  #           Write-Output "$(timestamp}: $response"
+  #         }
+
+# og
   test-windows:
     name: Test Windows
     runs-on: [windows-latest]
     needs: [build]
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: windows
 
-      - name: Test ${{ env.FILE_NAME }}.exe
-        run: |
-          Start-Process -FilePath ".\${{ env.FILE_NAME }}.exe" -NoNewWindow
-          Start-Sleep -Seconds 1
-          $names = @("Obi-wan", "Qui-gon", "Maul", "Vader", "Boba")
-          foreach($name in $names) {
-            $timestamp = GET-Date -Format "yyyy-MM-dd HH:mm:ss"
-            $response = Invoke-RestMethod -Uri "http://localhost:8080/$name" -Method Get
-            Write-Output "$(timestamp}: $response"
-          }
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: windows
 
+    - name: Test ${{ env.FILE_NAME }}.exe
+      run: |
+        Start-Process -FilePath ".\${{ env.FILE_NAME }}.exe" -NoNewWindow
+        Start-Sleep -Seconds 1
+        $names = @("Anakin", "Luke", "Leia", "Kylo", "Rey")
+        foreach ($name in $names) {
+          $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+          $response = Invoke-RestMethod -Uri "http://localhost:8080/$name" -Method Get
+          Write-Output "${timestamp}: $response"
+        }
 
 
 
