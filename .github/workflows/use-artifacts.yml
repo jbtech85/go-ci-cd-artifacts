@@ -16,7 +16,7 @@ jobs:
       - name: Build ${{ env.FILE_NAME }} for linux
         run: go build ${{ env.FILE_NAME }}.go
 
-      - name: Upload artifact for linux
+      - name: Build ${{ env.FILE_NAME }} for windows
         run: GOOS=windows GOARCH=amd64 go build ${{ env.FILE_NAME }}.go
 
       - name: Upload artifact for linux
@@ -24,6 +24,12 @@ jobs:
         with:
           name: linux
           path: ./${{ env.FILE_NAME }}
+      
+      - name: Upload artifact for windows
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: ./${{ env.FILE_NAME }}.exe
 
   test-linux:
     name: Test Linux
@@ -45,51 +51,26 @@ jobs:
             echo "$(data): $(curl -s http://localhost:8080/${i})"
           done
 
-# my typeup
-  # test-windows:
-  #   name: Test Windows
-  #   runs-on: [windows-latest]
-  #   needs: [build]
-  #   steps:
-  #     - name: Download artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: windows
-
-  #     - name: Test ${{ env.FILE_NAME }}.exe
-  #       run: |
-  #         Start-Process -FilePath ".\${{ env.FILE_NAME }}.exe" -NoNewWindow
-  #         Start-Sleep -Seconds 1
-  #         $names = @("Obi-wan", "Qui-gon", "Maul", "Vader", "Boba")
-  #         foreach($name in $names) {
-  #           $timestamp = GET-Date -Format "yyyy-MM-dd HH:mm:ss"
-  #           $response = Invoke-RestMethod -Uri "http://localhost:8080/$name" -Method Get
-  #           Write-Output "$(timestamp}: $response"
-  #         }
-
-# og
   test-windows:
     name: Test Windows
     runs-on: [windows-latest]
     needs: [build]
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows
 
-    - name: Download artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: windows
-
-    - name: Test ${{ env.FILE_NAME }}.exe
-      run: |
-        Start-Process -FilePath ".\${{ env.FILE_NAME }}.exe" -NoNewWindow
-        Start-Sleep -Seconds 1
-        $names = @("Anakin", "Luke", "Leia", "Kylo", "Rey")
-        foreach ($name in $names) {
-          $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-          $response = Invoke-RestMethod -Uri "http://localhost:8080/$name" -Method Get
-          Write-Output "${timestamp}: $response"
-        }
-
+      - name: Test ${{ env.FILE_NAME }}.exe
+        run: |
+          Start-Process -FilePath ".\${{ env.FILE_NAME }}.exe" -NoNewWindow
+          Start-Sleep -Seconds 1
+          $names = @("Obi-wan", "Qui-gon", "Maul", "Vader", "Boba")
+          foreach($name in $names) {
+            $timestamp = GET-Date -Format "yyyy-MM-dd HH:mm:ss"
+            $response = Invoke-RestMethod -Uri "http://localhost:8080/$name" -Method Get
+            Write-Output "$(timestamp}: $response"
+          }
 
 
           
