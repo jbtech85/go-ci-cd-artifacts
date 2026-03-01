@@ -69,7 +69,7 @@ jobs:
           foreach($name in $names) {
             $timestamp = GET-Date -Format "yyyy-MM-dd HH:mm:ss"
             $response = Invoke-RestMethod -Uri "http://localhost:8080/$name" -Method Get
-            Write-Output "$(timestamp}: $response"
+            Write-Output "${timestamp}: $response"
           }
 
 
